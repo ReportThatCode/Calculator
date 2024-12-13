@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <style>
+            .calculadora {
+                margin: 100px auto;
+                width: 350px;
+                height: 600px;
+                background-color: #050C26;
+                border-radius: 14px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow: hidden;
+                box-shadow: -1px 2px 10px rgba(0,0,0,0.5);
+                
+            }
+            .header-cal {
+                background-color: #172D67;
+                width: 100%;
+                height: 300px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
+            .all-math,.main-math {
+                padding: 0.5rem 1rem;
+                text-align: right;
+                border-radius: 12px;
+                overflow: hidden;
+                margin-right: 10px;
+                width: 80%;
+                color: white;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+            .all-math {
+                margin-top: 15px;
+            }
+            .main-math {
+                margin-bottom: 20px;
+                font-size: 3.5rem;
+                padding: 0.8rem 1rem;
+            }
+           
+            input {
+                cursor: pointer;
+                background-color: transparent;
+                color: white;
+                
+                font-size: 1.3rem;
+                outline: none;
+                border: 1px #1b204e solid;
+                font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            }
+    
+            input:nth-of-type(4), input:nth-of-type(8){
+                background-color: #0A173A;
+            }
+            .container-keys {
+                height: 100%;
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(4,1fr);
+                grid-template-rows: repeat(5,1fr);
+            }
+            .container-keys input:nth-child(16){
+                grid-column: 1/3;
+            }
+            
+            .right-values {
+                grid-column: 4/5;
+                grid-row: 3/6;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                background-color: #0A173A;
+        
+            }
+            .right-values input{
+                flex-grow: 1;
+                
+            }
+
+    </style>
+</head>
+<body>
+    <main>
+        <div class="calculadora">
+            
+            <div class="header-cal">
+                <span class="all-math"></span>
+                <span class="main-math">0</span>
+            </div>
+        
+            <div class="container-keys">
+                    <!-- 1era fila -->
+                <input type="button" value="Ac">
+                <input type="button" value="C">
+                <input type="button" value="%">
+                <input type="button" value="*">
+                    <!-- 2da fila -->
+                <input type="button" value="7">
+                <input type="button" value="8">
+                <input type="button" value="9">
+                <input type="button" value="-">
+                    <!-- 3era fila -->
+                <input type="button" value="4">
+                <input type="button" value="5">
+                <input type="button" value="6">
+                <div class="right-values">
+                    <input type="button" value="+">
+                    <input type="button" value="=">
+                </div>     
+                    <!-- 4ta fila -->
+
+                <input type="button" value="1">
+                <input type="button" value="2">
+                <input type="button" value="3">
+                <!--es-->
+                <input type="button" value="0">
+                <input type="button" value=".">
+
+            </div>
+        </div>
+    </main>
+    <script>
+    const allMath = document.querySelector(".all-math")
+    const mainMath = document.querySelector(".main-math");
+    const btn = document.querySelectorAll("input");
+    const regex = new RegExp("[\\*\\-\\+\\%]");
+    
+    
+    let a = 0;
+    let b = 0;
+    let operador = "" 
+    let hasOperador = false;
+    
+    function resetCalculator(){
+     a = 0;
+     b = 0;
+     operador = "" 
+     hasOperador = false;
+     allMath.textContent = ""
+     mainMath.textContent =  "0"
+    }
+
+    function showAllMath(a,b,simbol){
+    
+        return allMath.textContent = `${a} ${simbol} ${b} =`
+    }
+
+    function resetSecondMath(){
+        b = 0;
+        operador = ""
+        hasOperador = false;
+    }
+
+    function sendValue(e){
+
+        if(e === "Ac"){
+            return resetCalculator()
+        }
+        if(e === "C"){
+            let text = mainMath.textContent.slice(0,-1);
+            return mainMath.textContent = text
+        }
+        // = 
+        if(e === "="){
+            b = parseInt(mainMath.textContent);
+            if(!hasOperador)return
+            showAllMath(a,b,operador)
+            result = mathFunction(a,b,operador)
+            mainMath.textContent = result;
+            a = result;
+            return resetSecondMath();
+        }
+        // Operador
+        if(regex.test(e)){
+            operador = e;
+            if(hasOperador){
+            let text = allMath.textContent;
+            return allMath.textContent = text.replace(regex,operador)
+            }
+            
+            hasOperador = true
+            a = parseInt(mainMath.textContent);
+            mainMath.textContent = "0"
+            return showAllMath(a,"",operador)
+        
+            
+        }
+        let toNumber = parseInt(e)
+
+        if(typeof toNumber === "number"){
+            if(mainMath.textContent === "0") mainMath.textContent = ""
+            return mainMath.textContent += e
+        }
+        }
+
+        function mathFunction(first,second,simbol){
+            const a = parseInt(first)
+            const b = parseInt(second)
+
+            if(simbol === "+") return a + b 
+            else if(simbol === "-") return a - b
+            else if(simbol === "*") return a * b
+            else if(simbol === "%") return a / b
+        }
+
+
+ //   let calculator = Math.abs(parseInt(string))
+    document.addEventListener("click",(e)=>{
+
+        if(e.target.matches("input")){
+           // console.log(e.target)
+            sendValue(e.target.value)
+
+        }
+    })
+    
+    </script>
+</body>
+</html>
